@@ -1,0 +1,86 @@
+#用户登录正常流程
+- username: member
+  password: member123
+  expected:
+    status: 200
+    code: 200
+    message: 操作成功
+#用户登录异常流程 之 输入正确的用户名 输入错误的密码 实际密码不正确！
+- username: member
+  password: member1234
+  expected:
+    status: 200
+    code: 500
+    message: 密码不正确！
+#用户登录异常流程 之 输入错误的用户名 输入正确的密码 实际找不到该用户!
+- username: IsnotExistuser
+  password: anything
+  expected:
+    status: 200
+    code: 500
+    message: 找不到该用户！
+- username:
+  password:
+  expected:
+    status: 400
+- username:
+  password: anything
+  expected:
+    status: 400
+- username: anything
+  password:
+  expected:
+    status: 400
+- username: ''
+  password: ''
+  expected:
+    status: 200
+    code: 500
+    message: 用户名或密码不能为空！
+#用户名为空
+- username: ''
+  password: member123
+  expected:
+    status: 200
+    code: 500
+    message: 用户名或密码不能为空！
+#密码置空
+- username: anything
+  password: ''
+  expected:
+    status: 200
+    code: 500
+    message: 用户名或密码不能为空！
+- username: 1
+  password: 2
+  expected:
+    status: 200
+    code: 500
+    message: 找不到该用户！
+#SqlInjection
+- username: member' --
+  password: anything
+  expected:
+    status: 200
+    code: 500
+    message: 找不到该用户！
+- username: member' or '1'='1
+  password: anything
+  expected:
+    status: 200
+    code: 500
+    message: 找不到该用户！
+# XSS
+- username: <script>alert(1)</script>
+  password: anything
+  expected:
+    status: 200
+    code: 500
+    message: 找不到该用户！
+#超长用户名
+- username: 12345678901234567890123456hdgdssdfsdfsdfdsfdsfdsgtrhjhgjhgjghjghjhjghjhjfgsfggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggrrrrrrrrrrrrrrrrrrrrrrryyyyyyyyyyyyyyyy7890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234
+  password: anything
+  expected:
+    status: 200
+    code: 500
+    message: 找不到该用户！
